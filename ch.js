@@ -1,5 +1,5 @@
-//IIF
-(function(window){
+//IIFE
+(function(window, document, undefined){
     // 'use strict';
 
     // This function will contain all methods
@@ -12,15 +12,16 @@
         var settings = {
             
         };
- 
-    // Change a private property
-    
+     
     //Utils
+
+    // check if string
+
     _ch.isString = function(value){
         return typeof value === 'string';
     };
     
-    
+    // check if number
     _ch.isNumber = function(value){
         return typeof value === "number";
     };
@@ -32,6 +33,7 @@
     };
 
     //check if object has properties
+
     _ch.isEmptyObject = function(value) {
         for (var key in value){
             if(value.hasOwnProperty(key))
@@ -45,17 +47,71 @@
         return Array.isArray(value);
     }
 
-    /*-------Array functions ----------------------*/
+    /*-------Arrays----------------------*/
 
-    //merge two arrays
+    /*$sql.unionAll - merge two arrays
+    Sample:
+    $sql.unionAll([1,2,3],[3,4,5])
+    //[1, 2, 3, 3, 4, 5]
+    */
     _ch.unionAll = function (value1, value2){
         if(this.isArray(value1) && this.isArray(value2)){
             return (value1.concat(value2));
         };
     };
+    
+    /* $sql.union - get unique values after merging two arrays
+    
+    Sample:
+    var value1 = [1, 2, 3 , 4, 5];
+    var value2 = [1, 2, 3, 6, 7, 8];
+    $sql.union(value1,value2)
+    // [1, 2, 3, 4, 5, 6, 7, 8]
+    */
 
-    //similar to SQL where
-    /*  //Sample
+    _ch.union = function (value1, value2){
+        let result = _ch.unionAll(value1, value2);
+        return uniquResult = result.filter(function(item, pos){
+           return result.indexOf(item) == pos
+        });      
+    };
+
+    // $sql.common - get common values after merging two arrays
+    /*
+    Sample:
+    var value1 = [1, 2, 3 , 4, 5];
+    var value2 = [1, 2, 3, 6, 7, 8];
+    $sql.common(value1,value2)
+    // [1, 2, 3]
+    */
+    _ch.common = function (value1, value2){
+        let result = _ch.unionAll(value1, value2);
+        return uniquResult = result.filter(function(item, pos){
+           return result.indexOf(item) !== pos
+        });      
+    };
+
+    // $sql.findItem - find item(s) based on filter in a string array
+    /*
+    Sample:
+    var animals = ['ant', 'elephant', 'dog', 'frog', 'lion'];
+    $sql.findItem(animals, 'nt')
+    //  ["ant", "elephant"]
+    */
+   _ch.findItem = function (value, filterVal){
+    return value.filter(function(el) {
+        return el.toLowerCase().indexOf(filterVal.toLowerCase()) > -1;
+    });      
+};
+    /* $sql.where (array, operator, filter Value) - filter data from a numeric array
+        gt = greater than
+        lt = less than
+        gte = greter than or equal
+        lte - less than or equal
+        eq = equal
+        eve = even
+        odd = odd    
+    Sample:
         let arr = [1,2,3,4,5,6];
         $sql.where(arr,'lt',4)) //[1,2,3]
     */
@@ -63,43 +119,43 @@
         let results = [];
         switch(operator){
             case 'gt':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val > filterVal; 
                 });
                 return results;
                 break;
             case 'lt':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val < filterVal; 
                 });
                 return results;
                 break;
             case 'gte':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val >= filterVal; 
                 });
                 return results;
                 break;
             case 'lte':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val <= filterVal; 
                 });
                 return results;
                 break;
             case 'eq':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val === filterVal; 
                 });
                 return results;
                 break;
             case 'eve':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val % 2 === 0; 
                 });
                 return results;
                 break;
             case 'odd':
-                results = arr.filter(val => {
+                results = value.filter(val => {
                     return val % 2 === 1; 
                 });
                 return results;
@@ -110,9 +166,14 @@
     }
 
     /*------Strings functions ---------------------*/
-    //Concatanate with seperator
-    //if seperator is not provided default to ' '
+    /*$sql.concatWS - Concatanate two strings with a seperator
+      if seperator is not provided default to ' '
     
+    Sample: 
+    $sql.concatWS('String 1','String 2', '---')
+    //"String 1---String 2"
+    
+    */
     _ch.concatWS = function(value1,value2,seperator){
         seperator = (typeof seperator !=='undefined'? seperator : ' ');
         if(this.isString(value1) && this.isString(value2)){
@@ -120,63 +181,24 @@
         };
     };
     
-    // concatanate all values in an array
+    /*$sql.concatList - all values in an array
+    Sample: 
     
+    $sql.concatList([1,2,3,4,5,6])
+    // "123456"
+    */
     _ch.concatList = function(value){
         if(this.isArray(value)){
             return ''.concat(...value);
         };
     };
-    
-    //find substring in a string
-    //CHARINDEX(searchStr, value, start)
-    // searchStr - Required. The substring to search for
-    // value - Required. The string to be searched
-    // start - optional - The position where the search will start. if the position is not provided start from 1
-
-    _ch.charIndex = function(searchStr, value, start) { 
-        if(this.isString(value)) {
-            return value.indexOf(searchStr,start)
-        }
-    };
-
-    //find value in Object Array
-    //array - required - Object array
-    //key - required - object property key ''
-    //value - require - search value
-
-    /* Sample
-    const inventory = [
-        {name: 'apples', quantity: 2},
-        {name: 'bananas', quantity: 0},
-        {name: 'cherries', quantity: 5}
-    ];
-
-    var value = 2
-    var obj = findValueObjArray(inventory, 'quantity', searchString);
-    //{ name: 'apples', quantity: 2 }
-    */
-
-    _ch.findValueObjArray = function(array, key, value) {
-        for (var i = 0; i < array.length; i++) {
-            if (array[i][key] === value) {
-                return array[i];
-             }
-        }
-        return null;
-    }
-    
-
-
-
 
     return _ch;
-    
+    }
 
-}
     //library is globally accesible and save in the window
     if(typeof(window.$sql) === 'undefined'){
         window.$sql = chLibrary   ();
     }
-})(window); //IIF
+})(window, document); //IIFE
 

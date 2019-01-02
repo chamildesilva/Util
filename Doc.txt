@@ -1,0 +1,55 @@
+$sql.unionAll - merge two arrays
+Sample:
+$sql.unionAll([1,2,3],[3,4,5])
+// �[1, 2, 3, 3, 4, 5]
+
+$sql.union - get unique values after merging two arrays
+Sample:
+var value1 = [1, 2, 3 , 4, 5];
+var value2 = [1, 2, 3, 6, 7, 8];
+$sql.union(value1,value2)
+// [1, 2, 3, 4, 5, 6, 7, 8]
+
+
+$sql.common - get common values after merging two arrays
+Sample:
+var value1 = [1, 2, 3 , 4, 5];
+var value2 = [1, 2, 3, 6, 7, 8];
+$sql.common(value1,value2)
+// [1, 2, 3]
+
+
+$sql.findItem - find item(s) based on filter in a string array
+Sample:
+var animals = ['ant', 'elephant', 'dog', 'frog', 'lion'];
+$sql.findItem(animals, 'nt')
+// �["ant", "elephant"]
+
+$sql.where (array, operator, filter Value) - filter data from a numeric array
+gt = greater than
+lt = less than
+gte = greter than or equal
+lte - less than or equal
+eq = equal
+eve = even
+odd = odd  
+
+Sample:
+let arr = [1,2,3,4,5,6];
+$sql.where(arr,'lt',4)) 
+//[1,2,3]
+
+
+$sql.concatList - all values in an array
+Sample: 
+
+$sql.concatList([1,2,3,4,5,6])
+// "123456"
+
+
+$sql.concatWS - Concatanate two strings with a seperator
+if seperator is not provided default to ' '
+
+Sample: 
+$sql.concatWS('String 1','String 2', '---')
+//"String 1---String 2"
